@@ -7,6 +7,7 @@ const cors = require("cors");
 const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
+const authRouter = require("./routes/auth");
 
 const app = express();
 
@@ -17,13 +18,13 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: `http://localhost:${process.env.PORT}}`,
+    origin: process.env.CLIENT_PORT,
     methods: "GET, POST",
     credential: true,
-    preflightContinue: true,
   }),
 );
 
 app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 module.exports = app;
