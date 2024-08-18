@@ -1,12 +1,12 @@
 const express = require("express");
 
-const { verifyJwtToken } = require("../middlewares/verifyJwtToken");
 const { Package } = require("../model/Package");
 const { User } = require("../model/User");
+const { verifyJWTToken } = require("../middlewares/verifyJWTtoken");
 
 const router = express.Router();
 
-router.post("/new", verifyJwtToken, async (req, res, next) => {
+router.post("/new", verifyJWTToken, async (req, res, next) => {
   const userId = req.userId;
   const { orders } = req.body;
 
@@ -27,11 +27,15 @@ router.post("/new", verifyJwtToken, async (req, res, next) => {
   const newPackage = await Package.create({
     serialNumber,
     orders,
-    author: userId,
+    author: userId ?? "NotLoginUser",
   });
 
-  await User.updateOne({ _id: userId }, { $push: { history: newPackage._id } });
-
+  if (userId) {
+    await User.updateOne(
+      { _id: userId },
+      { $push: { history: newPackage._id } },
+    );
+  }
   res.send({ serialNumber, packageId: newPackage._id });
 });
 

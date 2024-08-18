@@ -1,9 +1,14 @@
 const jwt = require("jsonwebtoken");
 
-const verifyJwtToken = (req, res, next) => {
+const verifyJWTToken = (req, res, next) => {
   try {
-    const jwtToken = req.headers["authorization"].split(" ")[1];
-    const { _id } = jwt.verify(jwtToken, process.env.JWT_SECRET_KEY);
+    const JWTToken = req.headers["authorization"].split(" ")[1];
+
+    if (!JWTToken) {
+      return next();
+    }
+
+    const { _id } = jwt.verify(JWTToken, process.env.JWT_SECRET_KEY);
 
     req.userId = _id;
     next();
@@ -12,4 +17,4 @@ const verifyJwtToken = (req, res, next) => {
   }
 };
 
-exports.verifyJwtToken = verifyJwtToken;
+exports.verifyJWTToken = verifyJWTToken;
