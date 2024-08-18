@@ -43,8 +43,6 @@ router.get("/:serialNumber", async (req, res, next) => {
   const serialNumber = req.params?.serialNumber;
   const existPackage = await Package.findOne({ serialNumber }).lean();
 
-  console.log(existPackage, serialNumber);
-
   if (!existPackage) {
     return res.status(404).json({ message: "찾을 수 없는 주문입니다." });
   }
