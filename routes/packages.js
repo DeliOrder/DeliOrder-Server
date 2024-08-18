@@ -27,7 +27,7 @@ router.post("/new", verifyJWTToken, async (req, res, next) => {
   const newPackage = await Package.create({
     serialNumber,
     orders,
-    author: userId ?? "NotLoginUser",
+    ...(userId && { author: userId }),
   });
 
   if (userId) {
@@ -37,6 +37,22 @@ router.post("/new", verifyJWTToken, async (req, res, next) => {
     );
   }
   res.send({ serialNumber, packageId: newPackage._id });
+});
+
+router.get("/:serialNumber", async (req, res, next) => {
+  const serialNumber = req.params?.serialNumber;
+  const existPackage = await Package.findOne({ serialNumber }).lean();
+
+  console.log(existPackage, serialNumber);
+
+  if (!existPackage) {
+    return res.status(404).json({ message: "찾을 수 없는 주문입니다." });
+  }
+
+  return res.status(200).json({
+    message: "성공적으로 주문을 불러왔습니다.",
+    existPackage,
+  });
 });
 
 module.exports = router;
