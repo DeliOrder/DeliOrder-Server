@@ -10,7 +10,11 @@ router.post("/sign-in/kakao", async (req, res, next) => {
   try {
     const { authCode } = req.body;
     const {
-      data: { access_token, refresh_token, expires_in },
+      data: {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_in: expiresIn,
+      },
     } = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       new URLSearchParams({
@@ -35,7 +39,7 @@ router.post("/sign-in/kakao", async (req, res, next) => {
     } = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
         "content-type": "application/x-www-form-urlencoded;charset=utf-8",
-        Authorization: "Bearer " + access_token,
+        Authorization: "Bearer " + accessToken,
       },
     });
 
@@ -43,10 +47,10 @@ router.post("/sign-in/kakao", async (req, res, next) => {
     let _id;
 
     if (existUser) {
-      const a = await User.updateOne(
+      await User.updateOne(
         { email },
         {
-          refreshToken: refresh_token,
+          refreshToken,
         },
       );
 
@@ -56,17 +60,17 @@ router.post("/sign-in/kakao", async (req, res, next) => {
         nickname,
         email,
         loginType: "kakao",
-        refreshToken: refresh_token,
+        refreshToken,
       });
 
       _id = userDate._id;
     }
 
     const jwtToken = jwt.sign({ _id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: expires_in,
+      expiresIn,
     });
 
-    res.send({ jwtToken, refresh_token, target_id, _id });
+    res.send({ jwtToken, refreshToken, target_id, _id });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -106,7 +110,7 @@ router.post("/refresh/kakao", async (req, res, next) => {
 
   if (clientRefreshToken === userRefreshToken) {
     const {
-      data: { expires_in, refresh_token },
+      data: { expires_in: expiresIn, refresh_token: refreshToken },
     } = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       new URLSearchParams({
@@ -121,20 +125,20 @@ router.post("/refresh/kakao", async (req, res, next) => {
       },
     );
 
-    if (refresh_token) {
+    if (refreshToken) {
       await User.updateOne(
         { _id: userId },
         {
-          refreshToken: refresh_token,
+          refreshToken,
         },
       );
     }
 
     const jwtToken = jwt.sign({ _id: userId }, process.env.JWT_SECRET_KEY, {
-      expiresIn: expires_in,
+      expiresIn,
     });
 
-    res.send({ jwtToken, refresh_token });
+    res.send({ jwtToken, refreshToken });
   }
 });
 
