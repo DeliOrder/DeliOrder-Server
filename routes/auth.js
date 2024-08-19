@@ -99,4 +99,43 @@ router.post("/sign-out/kakao", async (req, res, next) => {
   }
 });
 
+router.post("/refresh/kakao", async (req, res, next) => {
+  const clientRefreshToken = req.headers["authorization"]?.split(" ")[1];
+  const { userId } = req.body;
+  const { refreshToken: userRefreshToken } = await User.findById(userId).lean();
+
+  if (clientRefreshToken === userRefreshToken) {
+    const {
+      data: { expires_in, refresh_token },
+    } = await axios.post(
+      "https://kauth.kakao.com/oauth/token",
+      new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: process.env.KAKAO_CLIENT_ID,
+        refresh_token: clientRefreshToken,
+      }),
+      {
+        headers: {
+          "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      },
+    );
+
+    if (refresh_token) {
+      await User.updateOne(
+        { _id: userId },
+        {
+          refreshToken: refresh_token,
+        },
+      );
+    }
+
+    const jwtToken = jwt.sign({ _id: userId }, process.env.JWT_SECRET_KEY, {
+      expiresIn: expires_in,
+    });
+
+    res.send({ jwtToken, refresh_token });
+  }
+});
+
 module.exports = router;
