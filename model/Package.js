@@ -4,6 +4,7 @@ const OrderSchema = new mongoose.Schema(
   {
     action: { type: String, required: true },
     attachmentName: { type: String },
+    attachmentType: { type: String },
     attachmentUrl: { type: String },
     sourcePath: { type: String },
     executionPath: { type: String, required: true },
@@ -14,7 +15,7 @@ const OrderSchema = new mongoose.Schema(
 
 const PackageSchema = new mongoose.Schema(
   {
-    serialNumber: { type: Number },
+    serialNumber: { type: Number, unique: true },
     orders: {
       type: [OrderSchema],
       required: true,
@@ -23,7 +24,10 @@ const PackageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    expireAt: { type: Date, default: new Date(), expires: 600 },
+    expireAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 10 * 60 * 1000),
+    },
   },
   { timestamps: true },
 );
