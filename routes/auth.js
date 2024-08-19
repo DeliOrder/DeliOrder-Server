@@ -10,12 +10,7 @@ router.post("/sign-in/kakao", async (req, res, next) => {
   try {
     const { authCode } = req.body;
     const {
-      data: {
-        access_token,
-        refresh_token,
-        expires_in,
-        refresh_token_expires_in,
-      },
+      data: { access_token, refresh_token, expires_in },
     } = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       new URLSearchParams({
@@ -44,21 +39,14 @@ router.post("/sign-in/kakao", async (req, res, next) => {
       },
     });
 
-    const refresh_token_expires = Date.parse(
-      new Date() + refresh_token_expires_in * 1000,
-    );
-
     const existUser = await User.findOne({ email }).lean();
     let _id;
 
     if (existUser) {
-      await User.updateOne(
+      const a = await User.updateOne(
         { email },
         {
-          refresh_token: {
-            id: refresh_token,
-            expires: refresh_token_expires,
-          },
+          refreshToken: refresh_token,
         },
       );
 
@@ -68,10 +56,7 @@ router.post("/sign-in/kakao", async (req, res, next) => {
         nickname,
         email,
         loginType: "kakao",
-        refresh_token: {
-          id: refresh_token,
-          expires: refresh_token_expires,
-        },
+        refreshToken: refresh_token,
       });
 
       _id = userDate._id;
@@ -81,7 +66,7 @@ router.post("/sign-in/kakao", async (req, res, next) => {
       expiresIn: expires_in,
     });
 
-    res.send({ jwtToken, refresh_token, _id, target_id });
+    res.send({ jwtToken, refresh_token, target_id, _id });
   } catch (error) {
     res.status(500).send(error);
   }
