@@ -40,17 +40,26 @@ router.post("/new", verifyJWTToken, async (req, res, next) => {
 });
 
 router.get("/:serialNumber", async (req, res, next) => {
-  const serialNumber = req.params?.serialNumber;
-  const existPackage = await Package.findOne({ serialNumber }).lean();
+  try {
+    const serialNumber = req.params?.serialNumber;
+    const existPackage = await Package.findOne({ serialNumber }).lean();
 
-  if (!existPackage) {
-    return res.status(404).json({ message: "찾을 수 없는 주문입니다." });
+    if (!existPackage) {
+      return res.status(404).json({ message: "찾을 수 없는 주문입니다." });
+    }
+
+    return res.status(200).json({
+      message: "성공적으로 주문을 불러왔습니다.",
+      existPackage,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        message:
+          "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      });
   }
-
-  return res.status(200).json({
-    message: "성공적으로 주문을 불러왔습니다.",
-    existPackage,
-  });
 });
 
 module.exports = router;
