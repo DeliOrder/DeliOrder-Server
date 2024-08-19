@@ -21,10 +21,7 @@ const UserSchema = new mongoose.Schema(
       enum: ["local", "kakao", "google"],
       required: true,
     },
-    refreshToken: {
-      id: { type: String },
-      expires: { type: Number },
-    },
+    refreshToken: { type: String },
   },
   { timestamps: true },
 );
