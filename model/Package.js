@@ -15,7 +15,7 @@ const OrderSchema = new mongoose.Schema(
 
 const PackageSchema = new mongoose.Schema(
   {
-    serialNumber: { type: Number, unique: true },
+    serialNumber: { type: String, unique: true },
     orders: {
       type: [OrderSchema],
       required: true,
@@ -33,5 +33,6 @@ const PackageSchema = new mongoose.Schema(
 );
 
 const Package = mongoose.model("Package", PackageSchema);
+const Order = mongoose.model("Order", OrderSchema);
 
-module.exports = { Package };
+module.exports = { Package, Order };
