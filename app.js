@@ -9,6 +9,7 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const authRouter = require("./routes/auth");
 const packagesRouter = require("./routes/packages");
+const userRouter = require("./routes/users");
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use(
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/packages", packagesRouter);
+app.use("/users", userRouter);
 
 module.exports = app;
