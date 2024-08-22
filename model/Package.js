@@ -15,7 +15,7 @@ const OrderSchema = new mongoose.Schema(
 
 const PackageSchema = new mongoose.Schema(
   {
-    serialNumber: { type: Number, unique: true },
+    serialNumber: { type: String, unique: true },
     orders: {
       type: [OrderSchema],
       required: true,
