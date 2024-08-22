@@ -1,12 +1,19 @@
 const express = require("express");
 
 const { User } = require("../model/User");
+const { verifyJWTToken } = require("../middlewares/verifyJWTtoken");
 
 const router = express.Router();
 
-router.get("/:userId/history", async (req, res, next) => {
+router.get("/:userId/history", verifyJWTToken, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
+
     const { history } = await User.findById(userId).populate("history").lean();
 
     res.send({ history });
