@@ -33,5 +33,6 @@ const PackageSchema = new mongoose.Schema(
 );
 
 const Package = mongoose.model("Package", PackageSchema);
+const Order = mongoose.model("Order", OrderSchema);
 
-module.exports = { Package };
+module.exports = { Package, Order };
