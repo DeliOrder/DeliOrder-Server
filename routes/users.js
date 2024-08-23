@@ -8,10 +8,15 @@ const { isDuplicate } = require("../utils/isDuplicate");
 
 const router = express.Router();
 
-router.post("/:userId/bookmark", async (req, res, next) => {
+router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
     const { action } = req.body;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
 
     const existUser = await User.findById(userId).lean();
     if (!existUser) {
@@ -56,9 +61,14 @@ router.post("/:userId/bookmark", async (req, res, next) => {
   }
 });
 
-router.get("/:userId/bookmark", async (req, res, next) => {
+router.get("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
 
     const existUser = await User.findById(userId).lean();
     if (!existUser) {
