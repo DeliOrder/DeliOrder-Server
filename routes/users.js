@@ -8,10 +8,15 @@ const { isDuplicate } = require("../utils/isDuplicate");
 
 const router = express.Router();
 
-router.post("/:userId/bookmark", async (req, res, next) => {
+router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
     const { action } = req.body;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
 
     const existUser = await User.findById(userId).lean();
     if (!existUser) {
@@ -56,9 +61,14 @@ router.post("/:userId/bookmark", async (req, res, next) => {
   }
 });
 
-router.get("/:userId/bookmark", async (req, res, next) => {
+router.get("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
 
     const existUser = await User.findById(userId).lean();
     if (!existUser) {
@@ -83,6 +93,23 @@ router.get("/:userId/bookmark", async (req, res, next) => {
     return res.status(500).json({
       message: "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
     });
+  }
+});
+
+router.get("/:userId/history", verifyJWTToken, async (req, res, next) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).send({ error: "Unauthorized" });
+      return;
+    }
+
+    const { history } = await User.findById(userId).populate("history").lean();
+
+    res.send({ history });
+  } catch (error) {
+    console.error("유저정보를 불러오는 중 오류가 발생하였습니다.", error);
   }
 });
 
