@@ -9,17 +9,22 @@ const verifyJWTToken = (req, res, next) => {
       return;
     }
 
-    const { _id } = jwt.verify(JWTToken, process.env.JWT_SECRET_KEY);
+    const { _id, targetId, type } = jwt.verify(
+      JWTToken,
+      process.env.JWT_SECRET_KEY,
+    );
 
     req.userId = _id;
+    req.targetId = targetId;
+    req.loginType = type;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      res.status(401).send({ error: "Token expired" });
+      res.status(401).json({ error: "Token expired" });
       return;
     }
 
-    res.status(401).send({ error });
+    res.status(401).json({ error });
   }
 };
 
