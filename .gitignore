@@ -5,3 +5,6 @@ out
 *.log*
 .eslintcache
 .env
+
+serviceAccountKEy.json
+firebase-config.js
