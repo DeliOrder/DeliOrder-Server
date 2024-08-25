@@ -7,4 +7,3 @@ out
 .env
 
 serviceAccountKEy.json
-firebase-config.js
