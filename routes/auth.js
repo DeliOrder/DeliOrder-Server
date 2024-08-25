@@ -68,14 +68,14 @@ router.post("/sign-in/local", async (req, res, next) => {
       res.status(401).json({ error: "유효하지 않은 사용자입니다." });
     }
     const userId = existUser._id;
-    const deliOrderToken = generateAccessToken(existUser._id, "local");
-    const deliOrderRefreshToken = generateRefreshToken(existUser._id, "local");
+    const deliOrderToken = generateAccessToken(existUser._id, "email");
+    const deliOrderRefreshToken = generateRefreshToken(existUser._id, "email");
 
     res.status(200).json({
       deliOrderToken,
       deliOrderRefreshToken,
       userId,
-      loginType: "local",
+      loginType: "email",
     });
   } catch (error) {
     console.error("로컬로그인 에러: ", error);
@@ -257,7 +257,7 @@ router.post("/sign-up/local", async (req, res, next) => {
     await User.create({
       nickname: nicknameValue,
       email: emailValue,
-      loginType: "local",
+      loginType: "email",
     });
 
     res.status(201).json({ message: "회원가입에 성공하였습니다" });
