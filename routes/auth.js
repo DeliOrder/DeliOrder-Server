@@ -4,11 +4,10 @@ const axios = require("axios");
 
 const admin = require("../config/firebase-config");
 const { User } = require("../model/User");
-const { verifyJWTToken } = require("../middlewares/verifyJWTToken");
 
 const router = express.Router();
 
-const generateToken = (userId, loginType, ...additionalData) => {
+const generateAccessToken = (userId, loginType, ...additionalData) => {
   const tokenData = { _id: userId, type: loginType };
 
   additionalData.forEach((data) => {
@@ -17,6 +16,13 @@ const generateToken = (userId, loginType, ...additionalData) => {
 
   return jwt.sign(tokenData, process.env.JWT_SECRET_KEY, {
     expiresIn: "1h",
+  });
+};
+
+const generateRefreshToken = (userId, loginType) => {
+  const tokenData = { _id: userId, type: loginType };
+  return jwt.sign(tokenData, process.env.JWT_SECRET_KEY, {
+    expiresIn: "3d",
   });
 };
 
@@ -36,8 +42,15 @@ router.post("/sign-in/google", async (req, res, next) => {
     }
 
     const userId = existUser._id;
-    const deliOrderToken = generateToken(existUser._id, "google");
-    res.status(200).json({ deliOrderToken, userId, loginType: "google" });
+    const deliOrderToken = generateAccessToken(existUser._id, "google");
+    const deliOrderRefreshToken = generateRefreshToken(existUser._id, "google");
+
+    res.status(200).json({
+      deliOrderToken,
+      deliOrderRefreshToken,
+      userId,
+      loginType: "google",
+    });
   } catch (error) {
     console.error("구글 로그인 토큰 검증 실패", error);
     res.status(401).json({ error: "구글 로그인 토큰 검증 실패" });
@@ -55,8 +68,15 @@ router.post("/sign-in/local", async (req, res, next) => {
       res.status(401).json({ error: "유효하지 않은 사용자입니다." });
     }
     const userId = existUser._id;
-    const deliOrderToken = generateToken(existUser._id, "local");
-    res.status(200).json({ deliOrderToken, userId, loginType: "local" });
+    const deliOrderToken = generateAccessToken(existUser._id, "local");
+    const deliOrderRefreshToken = generateRefreshToken(existUser._id, "local");
+
+    res.status(200).json({
+      deliOrderToken,
+      deliOrderRefreshToken,
+      userId,
+      loginType: "local",
+    });
   } catch (error) {
     console.error("로컬로그인 에러: ", error);
     res.status(500).json({ error: "로그인 중 서버 에러가 발생했습니다." });
@@ -121,15 +141,22 @@ router.post("/sign-in/kakao", async (req, res, next) => {
     }
 
     const userId = existUser._id;
-    const deliOrderToken = generateToken(existUser._id, "kakao", {
+    const deliOrderToken = generateAccessToken(existUser._id, "kakao", {
       targetId: uid,
     });
+    const deliOrderRefreshToken = generateRefreshToken(existUser._id, "kakao");
 
     const firebaseToken = await admin
       .auth()
       .createCustomToken(String(uid), { nickname, email, loginType: "kakao" });
 
-    res.json({ firebaseToken, deliOrderToken, userId, loginType: "kakao" });
+    res.json({
+      firebaseToken,
+      deliOrderToken,
+      deliOrderRefreshToken,
+      userId,
+      loginType: "kakao",
+    });
   } catch (error) {
     console.error("Error authenticating with Kakao:", error);
     res.status(500).send("Authentication failed");
@@ -179,11 +206,10 @@ router.post("/refresh/kakao", async (req, res, next) => {
     }
 
     const existUser = await User.findById(userId).lean();
-    if (!existUser || !existUser.refreshToken) {
+    const userRefreshToken = existUser.refreshToken;
+    if (!existUser || !userRefreshToken) {
       return res.status(401).json({ error: "유효하지 않은 유저입니다." });
     }
-
-    const userRefreshToken = existUser.refreshToken;
 
     const tokenResponse = await axios.post(
       "https://kauth.kakao.com/oauth/token",
@@ -199,19 +225,18 @@ router.post("/refresh/kakao", async (req, res, next) => {
       },
     );
 
-    const { expires_in: expiresIn, refresh_token: newRefreshToken } =
-      tokenResponse.data;
+    const { refresh_token: newRefreshToken } = tokenResponse.data;
 
     if (newRefreshToken) {
       await User.updateOne({ _id: userId }, { refreshToken: newRefreshToken });
     }
 
-    const jwtToken = jwt.sign({ _id: userId }, process.env.JWT_SECRET_KEY, {
-      expiresIn,
+    const newDeliOrderToken = generateAccessToken(existUser._id, "kakao", {
+      targetId: uid,
     });
 
     res.json({
-      jwtToken,
+      newDeliOrderToken,
       refreshToken: newRefreshToken || userRefreshToken,
     });
   } catch (error) {
