@@ -2,9 +2,9 @@ const express = require("express");
 const axios = require("axios");
 
 const { User } = require("../../model/User");
+const signInRouter = require("./sign-in");
 
 const router = express.Router();
-const signInRouter = require("./sign-in");
 
 router.post("/sign-out/kakao", async (req, res, next) => {
   try {

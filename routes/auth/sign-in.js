@@ -1,9 +1,11 @@
 const express = require("express");
-
-const router = express.Router();
+const axios = require("axios");
 
 const admin = require("../../config/firebase-config");
 const { User } = require("../../model/User");
+
+const router = express.Router();
+
 const {
   generateAccessToken,
   generateRefreshToken,
