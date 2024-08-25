@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const logger = require("morgan");
 
-const authRouter = require("./routes/auth/auth");
+const authRouter = require("./routes/auth");
 const packagesRouter = require("./routes/packages");
 const usersRouter = require("./routes/users");
 

@@ -4,12 +4,12 @@ const axios = require("axios");
 const admin = require("../../config/firebase-config");
 const { User } = require("../../model/User");
 
-const router = express.Router();
-
 const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../../utils/generateToken");
+
+const router = express.Router();
 
 router.post("/google", async (req, res, next) => {
   try {
@@ -143,8 +143,8 @@ router.post("/kakao", async (req, res, next) => {
       loginType: "kakao",
     });
   } catch (error) {
-    console.error("Error authenticating with Kakao:", error);
-    res.status(500).send("Authentication failed");
+    console.error("Kakao 인증 에러: ", error);
+    res.status(500).send("인증에 실패하였습니다");
   }
 });
 
