@@ -81,7 +81,7 @@ router.post("/sign-in/kakao", async (req, res, next) => {
         },
       },
     );
-    const { access_token } = kakaoResponse.data;
+    const { access_token, refresh_token } = kakaoResponse.data;
 
     const userInfoResponse = await axios.get(
       "https://kapi.kakao.com/v2/user/me",
@@ -102,12 +102,22 @@ router.post("/sign-in/kakao", async (req, res, next) => {
         nickname,
         email,
         loginType: "kakao",
+        refreshToken: refresh_token,
+        targetId: uid,
       });
+
       await admin.auth().createUser({
         uid: String(uid),
-        email: email,
+        email,
         displayName: nickname,
       });
+    } else {
+      await User.updateOne(
+        { email },
+        {
+          refreshToken: refresh_token,
+        },
+      );
     }
 
     const userId = existUser._id;
@@ -126,14 +136,18 @@ router.post("/sign-in/kakao", async (req, res, next) => {
   }
 });
 
-router.post("/sign-out/kakao", verifyJWTToken, async (req, res, next) => {
+router.post("/sign-out/kakao", async (req, res, next) => {
   try {
-    if (req.targetId && req.loginType === "kakao") {
+    const { deliOrderUserId: userId } = req.body;
+
+    const { targetId, loginType } = await User.findById(userId).lean();
+
+    if (targetId && loginType === "kakao") {
       const result = await axios.post(
         "https://kapi.kakao.com/v1/user/logout",
         new URLSearchParams({
           target_id_type: "user_id",
-          target_id: req.targetId,
+          target_id: targetId,
         }),
         {
           headers: {
@@ -145,10 +159,10 @@ router.post("/sign-out/kakao", verifyJWTToken, async (req, res, next) => {
 
       if (!result.data.id) {
         console.error("로그아웃에 실패했습니다.");
-        return res
-          .status(400)
-          .json({ message: "성공적으로 로그아웃 했습니다." });
+        return res.status(400).json({ message: "로그아웃에 실패했습니다." });
       }
+
+      return res.status(200).json({ message: "성공적으로 로그아웃 했습니다." });
     }
   } catch (error) {
     console.error("로그아웃에 실패 했습니다.", error);
@@ -157,19 +171,26 @@ router.post("/sign-out/kakao", verifyJWTToken, async (req, res, next) => {
 });
 
 router.post("/refresh/kakao", async (req, res, next) => {
-  const clientRefreshToken = req.headers["authorization"]?.split(" ")[1];
-  const { userId } = req.body;
-  const { refreshToken: userRefreshToken } = await User.findById(userId).lean();
+  try {
+    const { userId } = req.body;
 
-  if (clientRefreshToken === userRefreshToken) {
-    const {
-      data: { expires_in: expiresIn, refresh_token: refreshToken },
-    } = await axios.post(
+    if (!userId) {
+      return res.status(400).json({ error: "유효하지 않은 유저입니다." });
+    }
+
+    const existUser = await User.findById(userId).lean();
+    if (!existUser || !existUser.refreshToken) {
+      return res.status(401).json({ error: "유효하지 않은 유저입니다." });
+    }
+
+    const userRefreshToken = existUser.refreshToken;
+
+    const tokenResponse = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       new URLSearchParams({
         grant_type: "refresh_token",
         client_id: process.env.KAKAO_CLIENT_ID,
-        refresh_token: clientRefreshToken,
+        refresh_token: userRefreshToken,
       }),
       {
         headers: {
@@ -178,20 +199,26 @@ router.post("/refresh/kakao", async (req, res, next) => {
       },
     );
 
-    if (refreshToken) {
-      await User.updateOne(
-        { _id: userId },
-        {
-          refreshToken,
-        },
-      );
+    const { expires_in: expiresIn, refresh_token: newRefreshToken } =
+      tokenResponse.data;
+
+    if (newRefreshToken) {
+      await User.updateOne({ _id: userId }, { refreshToken: newRefreshToken });
     }
 
     const jwtToken = jwt.sign({ _id: userId }, process.env.JWT_SECRET_KEY, {
       expiresIn,
     });
 
-    res.send({ jwtToken, refreshToken });
+    res.json({
+      jwtToken,
+      refreshToken: newRefreshToken || userRefreshToken,
+    });
+  } catch (error) {
+    console.error("토큰 재발급 시도중 오류:", error);
+    return res.status(400).json({
+      error: "토큰 재발급을 실패했습니다.",
+    });
   }
 });
 
