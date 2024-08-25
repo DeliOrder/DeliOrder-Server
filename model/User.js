@@ -18,10 +18,11 @@ const UserSchema = new mongoose.Schema(
     ],
     loginType: {
       type: String,
-      enum: ["local", "kakao", "google"],
+      enum: ["email", "kakao", "google"],
       required: true,
     },
     refreshToken: { type: String },
+    targetId: { type: String },
   },
   { timestamps: true },
 );

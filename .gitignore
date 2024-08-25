@@ -5,3 +5,5 @@ out
 *.log*
 .eslintcache
 .env
+
+serviceAccountKEy.json

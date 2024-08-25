@@ -2,7 +2,7 @@ const express = require("express");
 
 const { Package } = require("../model/Package");
 const { User } = require("../model/User");
-const { verifyJWTToken } = require("../middlewares/verifyJWTtoken");
+const { verifyJWTToken } = require("../middlewares/verifyJWTToken");
 
 const router = express.Router();
 
