@@ -30,6 +30,13 @@ router.post("/google", async (req, res, next) => {
     const deliOrderToken = generateAccessToken(existUser._id, "google");
     const deliOrderRefreshToken = generateRefreshToken(existUser._id, "google");
 
+    await User.updateOne(
+      { email },
+      {
+        deliOrderRefreshToken,
+      },
+    );
+
     res.status(200).json({
       deliOrderToken,
       deliOrderRefreshToken,
@@ -42,7 +49,7 @@ router.post("/google", async (req, res, next) => {
   }
 });
 
-router.post("/local", async (req, res, next) => {
+router.post("/email", async (req, res, next) => {
   try {
     const { firebaseIdToken } = req.body;
     const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
@@ -56,6 +63,13 @@ router.post("/local", async (req, res, next) => {
     const deliOrderToken = generateAccessToken(existUser._id, "email");
     const deliOrderRefreshToken = generateRefreshToken(existUser._id, "email");
 
+    await User.updateOne(
+      { email },
+      {
+        deliOrderRefreshToken,
+      },
+    );
+
     res.status(200).json({
       deliOrderToken,
       deliOrderRefreshToken,
@@ -63,7 +77,7 @@ router.post("/local", async (req, res, next) => {
       loginType: "email",
     });
   } catch (error) {
-    console.error("로컬로그인 에러: ", error);
+    console.error("이메일로그인 에러: ", error);
     res.status(500).json({ error: "로그인 중 서버 에러가 발생했습니다." });
   }
 });
@@ -102,12 +116,13 @@ router.post("/kakao", async (req, res, next) => {
     const uid = userInfoResponse.data.id;
 
     let existUser = await User.findOne({ email }).lean();
+
     if (!existUser) {
       existUser = await User.create({
         nickname,
         email,
         loginType: "kakao",
-        refreshToken: refresh_token,
+        socialRefreshToken: refresh_token,
         targetId: uid,
       });
 
@@ -120,16 +135,22 @@ router.post("/kakao", async (req, res, next) => {
       await User.updateOne(
         { email },
         {
-          refreshToken: refresh_token,
+          socialRefreshToken: refresh_token,
         },
       );
     }
-
     const userId = existUser._id;
     const deliOrderToken = generateAccessToken(existUser._id, "kakao", {
       targetId: uid,
     });
     const deliOrderRefreshToken = generateRefreshToken(existUser._id, "kakao");
+
+    await User.updateOne(
+      { email },
+      {
+        deliOrderRefreshToken,
+      },
+    );
 
     const firebaseToken = await admin
       .auth()
