@@ -44,14 +44,26 @@ router.post("/google", async (req, res, next) => {
       loginType: "google",
     });
   } catch (error) {
-    console.error("구글 로그인 토큰 검증 실패", error);
-    res.status(401).json({ error: "구글 로그인 토큰 검증 실패" });
+    console.error("구글 로그인 에러", error);
+    if (
+      error.code === "auth/id-token-expired" ||
+      error.code === "auth/invalid-id-token"
+    ) {
+      res.status(401).json({ error: "유효하지 않은 토큰입니다." });
+    } else {
+      res.status(500).json({ error: "구글 로그인에 실패하였습니다." });
+    }
   }
 });
 
 router.post("/email", async (req, res, next) => {
   try {
     const { firebaseIdToken } = req.body;
+
+    if (!firebaseIdToken) {
+      return res.status(400).json({ error: "firebaseIdToken이 필요합니다." });
+    }
+
     const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
     const { email } = decodedToken;
 
@@ -77,15 +89,26 @@ router.post("/email", async (req, res, next) => {
       loginType: "email",
     });
   } catch (error) {
-    console.error("이메일로그인 에러: ", error);
-    res.status(500).json({ error: "로그인 중 서버 에러가 발생했습니다." });
+    console.error("이메일 로그인 에러", error);
+    if (
+      error.code === "auth/id-token-expired" ||
+      error.code === "auth/invalid-id-token"
+    ) {
+      res.status(401).json({ error: "유효하지 않은 토큰입니다." });
+    } else {
+      res.status(500).json({ error: "이메일 로그인에 실패하였습니다." });
+    }
   }
 });
 
 router.post("/kakao", async (req, res, next) => {
-  const { authCode } = req.body;
-
   try {
+    const { authCode } = req.body;
+
+    if (!authCode) {
+      return res.status(400).json({ error: "잘못된 요청입니다." });
+    }
+
     const kakaoResponse = await axios.post(
       "https://kauth.kakao.com/oauth/token",
       new URLSearchParams({
@@ -164,8 +187,12 @@ router.post("/kakao", async (req, res, next) => {
       loginType: "kakao",
     });
   } catch (error) {
-    console.error("Kakao 인증 에러: ", error);
-    res.status(500).send("인증에 실패하였습니다");
+    console.error("카카오 로그인 에러: ", error);
+    if (error.response) {
+      res.status(400).json({ error: "카카오 로그인에 실패하였습니다." });
+    } else {
+      res.status(500).send({ error: "카카오 로그인에 실패하였습니다." });
+    }
   }
 });
 

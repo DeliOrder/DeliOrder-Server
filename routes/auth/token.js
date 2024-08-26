@@ -22,7 +22,8 @@ router.get("/validate", async (req, res, next) => {
 
 router.post("/refresh", async (req, res, next) => {
   try {
-    const { userId, deliOrderRefreshToken: userRefreshToken } = req.body;
+    const { deliOrderUserId: userId, deliOrderRefreshToken: userRefreshToken } =
+      req.body;
 
     if (!userId) {
       return res.status(401).json({ error: "유효하지 않은 유저입니다." });

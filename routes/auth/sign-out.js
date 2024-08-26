@@ -5,10 +5,14 @@ const { User } = require("../../model/User");
 
 const router = express.Router();
 
-// TODO: userId로 조회되는 정보가 없을 경우 등 에러처리 로직 보강필요
 router.post("/kakao", async (req, res, next) => {
   try {
     const { deliOrderUserId: userId } = req.body;
+
+    const existUser = await User.findById(userId).lean();
+    if (!existUser) {
+      res.status(400).json({ error: "해당 유저가 존재하지 않습니다." });
+    }
 
     const { targetId, loginType } = await User.findById(userId).lean();
 
