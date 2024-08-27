@@ -53,10 +53,10 @@ router.post("/refresh", async (req, res, next) => {
 
     await User.updateOne(
       { _id: userId },
-      { newDeliOrderRefreshToken, newDeliOrderToken },
+      { deliOrderRefreshToken: newDeliOrderRefreshToken },
     );
 
-    res.json({
+    return res.status(200).json({
       newDeliOrderToken,
       newDeliOrderRefreshToken,
     });

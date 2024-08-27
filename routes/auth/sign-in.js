@@ -37,7 +37,7 @@ router.post("/google", async (req, res, next) => {
       },
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       deliOrderToken,
       deliOrderRefreshToken,
       userId,
@@ -49,9 +49,11 @@ router.post("/google", async (req, res, next) => {
       error.code === "auth/id-token-expired" ||
       error.code === "auth/invalid-id-token"
     ) {
-      res.status(401).json({ error: "유효하지 않은 토큰입니다." });
+      return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
     } else {
-      res.status(500).json({ error: "구글 로그인에 실패하였습니다." });
+      res.status(500).json({
+        error: "서버의 응답이 없습니다. 구글 로그인에 실패하였습니다.",
+      });
     }
   }
 });
@@ -69,7 +71,7 @@ router.post("/email", async (req, res, next) => {
 
     const existUser = await User.findOne({ email }).lean();
     if (!existUser) {
-      res.status(401).json({ error: "유효하지 않은 사용자입니다." });
+      return res.status(401).json({ error: "유효하지 않은 사용자입니다." });
     }
     const userId = existUser._id;
     const deliOrderToken = generateAccessToken(existUser._id, "email");
@@ -94,9 +96,11 @@ router.post("/email", async (req, res, next) => {
       error.code === "auth/id-token-expired" ||
       error.code === "auth/invalid-id-token"
     ) {
-      res.status(401).json({ error: "유효하지 않은 토큰입니다." });
+      return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
     } else {
-      res.status(500).json({ error: "이메일 로그인에 실패하였습니다." });
+      return res.status(500).json({
+        error: "서버의 응답이 없습니다. 이메일 로그인에 실패하였습니다.",
+      });
     }
   }
 });
@@ -189,9 +193,13 @@ router.post("/kakao", async (req, res, next) => {
   } catch (error) {
     console.error("카카오 로그인 에러: ", error);
     if (error.response) {
-      res.status(400).json({ error: "카카오 로그인에 실패하였습니다." });
+      return res
+        .status(400)
+        .json({ error: "잘못된 요청입니다. 카카오 로그인에 실패하였습니다." });
     } else {
-      res.status(500).send({ error: "카카오 로그인에 실패하였습니다." });
+      return res.status(500).json({
+        error: "서버의 응답이 없습니다. 카카오 로그인에 실패하였습니다.",
+      });
     }
   }
 });
