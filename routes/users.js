@@ -107,7 +107,7 @@ router.get("/:userId/history", verifyJWTToken, async (req, res, next) => {
 
     const { history } = await User.findById(userId).populate("history").lean();
 
-    res.send({ history });
+    res.status(200).json({ history });
   } catch (error) {
     console.error("유저정보를 불러오는 중 오류가 발생하였습니다.", error);
   }
