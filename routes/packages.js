@@ -36,7 +36,7 @@ router.post("/new", verifyJWTToken, async (req, res, next) => {
       { $push: { history: newPackage._id } },
     );
   }
-  res.send({ serialNumber, packageId: newPackage._id });
+  return res.json({ serialNumber, packageId: newPackage._id });
 });
 
 router.get("/:serialNumber", async (req, res, next) => {
