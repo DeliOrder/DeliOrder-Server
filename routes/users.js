@@ -23,8 +23,6 @@ router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
       return res.status(404).json({ error: "존재하지 않는 사용자입니다." });
     }
 
-    const bookmarkIdList = existUser.bookmark;
-
     const bookmarkList = (
       await User.findById(userId).populate("bookmark").lean()
     ).bookmark;
@@ -32,27 +30,28 @@ router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
     const isNewBookmark = !bookmarkList.some((bookmark) =>
       isDuplicate(bookmark, action),
     );
-    if (!bookmarkIdList.length || isNewBookmark) {
-      const newBookmark = await Order.create(action);
 
-      const result = await User.updateOne(
-        { _id: userId },
-        { $push: { bookmark: newBookmark } },
-      );
-
-      if (!result.acknowledged) {
-        return res.status(500).json({
-          message:
-            "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-        });
-      }
-
-      return res.status(200).json({
-        message: "즐겨찾기 저장이 완료 되었습니다.",
-      });
-    } else {
+    if (!isNewBookmark) {
       return res.status(400).json({ message: "이미 등록된 즐겨찾기 입니다." });
     }
+
+    const newBookmark = await Order.create(action);
+
+    const result = await User.updateOne(
+      { _id: userId },
+      { $push: { bookmark: newBookmark } },
+    );
+
+    if (!result.acknowledged) {
+      return res.status(500).json({
+        message:
+          "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "즐겨찾기 저장이 완료 되었습니다.",
+    });
   } catch (error) {
     console.error("북마크 저장 중 에러 발생: ", error);
     return res.status(500).json({
