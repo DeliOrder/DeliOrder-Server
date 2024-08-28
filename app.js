@@ -29,4 +29,26 @@ app.use("/auth", authRouter);
 app.use("/packages", packagesRouter);
 app.use("/users", usersRouter);
 
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+
+  if (error.status === 500) {
+    return res.status(500).json({
+      error: "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    });
+  }
+
+  return res.status(error.status).json({
+    status: error.status,
+    error: `${error.status} : 에러가 발생하였습니다.`,
+  });
+});
+
 module.exports = app;
