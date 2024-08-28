@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { Package, Order } = require("../model/Package");
+const { Order } = require("../model/Package");
 const { User } = require("../model/User");
 const { verifyJWTToken } = require("../middlewares/verifyJWTToken");
 
@@ -43,6 +43,7 @@ router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
     );
 
     if (!result.acknowledged) {
+      const error = new Error();
       next(error);
     }
 
