@@ -42,9 +42,7 @@ router.post("/kakao", async (req, res, next) => {
     }
   } catch (error) {
     console.error("로그아웃에 실패 했습니다.", error);
-    return res
-      .status(500)
-      .json({ message: "서버의 응답이 없습니다. 로그아웃에 실패 했습니다." });
+    next(error);
   }
 });
 

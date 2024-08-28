@@ -22,9 +22,7 @@ router.post("/email", async (req, res, next) => {
     return res.status(201).json({ message: "회원가입에 성공하였습니다" });
   } catch (error) {
     console.error("회원가입에 실패하였습니다.", error);
-    return res
-      .status(500)
-      .json({ error: "서버의 응답이 없습니다. 회원가입에 실패하였습니다." });
+    next(error);
   }
 });
 
@@ -40,7 +38,7 @@ router.post("/check-email", async (req, res, next) => {
     }
   } catch (error) {
     console.error("중복아이디 검증 실패: ", error);
-    return res.status(500).json({ error: "일시적 서버 오류입니다." });
+    next(error);
   }
 });
 

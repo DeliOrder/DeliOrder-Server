@@ -30,12 +30,7 @@ router.post("/google", async (req, res, next) => {
     const deliOrderToken = generateAccessToken(existUser._id, "google");
     const deliOrderRefreshToken = generateRefreshToken(existUser._id, "google");
 
-    await User.updateOne(
-      { email },
-      {
-        deliOrderRefreshToken,
-      },
-    );
+    await User.updateOne({ email }, { deliOrderRefreshToken });
 
     return res.status(200).json({
       deliOrderToken,
@@ -45,16 +40,15 @@ router.post("/google", async (req, res, next) => {
     });
   } catch (error) {
     console.error("구글 로그인 에러", error);
+
     if (
       error.code === "auth/id-token-expired" ||
       error.code === "auth/invalid-id-token"
     ) {
       return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
-    } else {
-      res.status(500).json({
-        error: "서버의 응답이 없습니다. 구글 로그인에 실패하였습니다.",
-      });
     }
+
+    next(error);
   }
 });
 
@@ -97,11 +91,9 @@ router.post("/email", async (req, res, next) => {
       error.code === "auth/invalid-id-token"
     ) {
       return res.status(401).json({ error: "유효하지 않은 토큰입니다." });
-    } else {
-      return res.status(500).json({
-        error: "서버의 응답이 없습니다. 이메일 로그인에 실패하였습니다.",
-      });
     }
+
+    next(error);
   }
 });
 
@@ -196,11 +188,9 @@ router.post("/kakao", async (req, res, next) => {
       return res
         .status(400)
         .json({ error: "잘못된 요청입니다. 카카오 로그인에 실패하였습니다." });
-    } else {
-      return res.status(500).json({
-        error: "서버의 응답이 없습니다. 카카오 로그인에 실패하였습니다.",
-      });
     }
+
+    next(error);
   }
 });
 

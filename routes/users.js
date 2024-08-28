@@ -43,10 +43,7 @@ router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
     );
 
     if (!result.acknowledged) {
-      return res.status(500).json({
-        message:
-          "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-      });
+      next(error);
     }
 
     return res.status(200).json({
@@ -54,9 +51,7 @@ router.post("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
     });
   } catch (error) {
     console.error("북마크 저장 중 에러 발생: ", error);
-    return res.status(500).json({
-      message: "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-    });
+    next(error);
   }
 });
 
@@ -89,9 +84,7 @@ router.get("/:userId/bookmark", verifyJWTToken, async (req, res, next) => {
     });
   } catch (error) {
     console.error("북마크 불러오기 중 에러 발생: ", error);
-    return res.status(500).json({
-      message: "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-    });
+    next(error);
   }
 });
 
