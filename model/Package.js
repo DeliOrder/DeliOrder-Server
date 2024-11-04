@@ -9,6 +9,7 @@ const OrderSchema = new mongoose.Schema(
     sourcePath: { type: String },
     executionPath: { type: String, required: true },
     editingName: { type: String },
+    useVscode: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -26,7 +27,12 @@ const PackageSchema = new mongoose.Schema(
     },
     expireAt: {
       type: Date,
-      default: () => new Date(Date.now() + 10 * 60 * 1000),
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      index: { expires: "7d" },
+    },
+    validUntil: {
+      type: Date,
+      default: () => new Date(Date.now() + 1000 * 30 * 60 * 1000),
     },
   },
   { timestamps: true },
