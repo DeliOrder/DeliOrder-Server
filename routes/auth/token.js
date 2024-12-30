@@ -22,8 +22,8 @@ router.get("/validate", async (req, res, next) => {
 
 router.post("/refresh", async (req, res, next) => {
   try {
-    const { deliOrderUserId: userId, deliOrderRefreshToken: userRefreshToken } =
-      req.body;
+    const { deliOrderUserId: userId } = req.body;
+    const { refreshToken: userRefreshToken } = req.cookies;
 
     if (!userId) {
       return res.status(401).json({ error: "유효하지 않은 유저입니다." });
@@ -56,9 +56,15 @@ router.post("/refresh", async (req, res, next) => {
       { deliOrderRefreshToken: newDeliOrderRefreshToken },
     );
 
+    res.cookie("refreshToken", newDeliOrderRefreshToken, {
+      sameSite: "strict",
+      httpOnly: true,
+      maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
     return res.status(200).json({
       newDeliOrderToken,
-      newDeliOrderRefreshToken,
     });
   } catch (error) {
     console.error("토큰 재발급 시도중 오류:", error);

@@ -32,9 +32,15 @@ router.post("/google", async (req, res, next) => {
 
     await User.updateOne({ email }, { deliOrderRefreshToken });
 
+    res.cookie("refreshToken", deliOrderRefreshToken, {
+      sameSite: "lax",
+      httpOnly: true,
+      maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+      secure: true,
+    });
+
     return res.status(200).json({
       deliOrderToken,
-      deliOrderRefreshToken,
       userId,
       loginType: "google",
     });
@@ -78,9 +84,15 @@ router.post("/email", async (req, res, next) => {
       },
     );
 
+    res.cookie("refreshToken", deliOrderRefreshToken, {
+      sameSite: "lax",
+      httpOnly: true,
+      maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+      secure: true,
+    });
+
     res.status(200).json({
       deliOrderToken,
-      deliOrderRefreshToken,
       userId,
       loginType: "email",
     });
@@ -175,10 +187,16 @@ router.post("/kakao", async (req, res, next) => {
       .auth()
       .createCustomToken(String(uid), { nickname, email, loginType: "kakao" });
 
-    res.json({
+    res.cookie("refreshToken", deliOrderRefreshToken, {
+      sameSite: "strict",
+      httpOnly: true,
+      maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
+    res.status(200).json({
       firebaseToken,
       deliOrderToken,
-      deliOrderRefreshToken,
       userId,
       loginType: "kakao",
     });
