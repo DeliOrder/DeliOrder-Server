@@ -38,6 +38,13 @@ router.post("/kakao", async (req, res, next) => {
         });
       }
 
+      res.clearCookie("refreshToken", {
+        sameSite: "Strict",
+        httpOnly: true,
+        maxAge: 3 * 30 * 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+
       return res.status(200).json({ message: "성공적으로 로그아웃 했습니다." });
     }
   } catch (error) {
