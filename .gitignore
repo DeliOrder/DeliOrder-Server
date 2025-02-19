@@ -1,9 +1,12 @@
 node_modules
-dist
+.env
+.husky
 out
 .DS_Store
 *.log*
 .eslintcache
-.env
 
-serviceAccountKEy.json
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
