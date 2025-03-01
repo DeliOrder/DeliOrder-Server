@@ -1,33 +1,129 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deliorder
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deliorder-server
-  namespace: default
+  name: server
+  namespace: deliorder
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: deliorder
+      app: server
   template:
     metadata:
       labels:
-        app: deliorder
+        app: server
     spec:
       containers:
-        - name: deliorder-container
-          image: farmer15/deliorder-server:latest
+        - name: server
+          image: subocker/deliorder-server:latest
           imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "8080"
+            - name: DATABASE_URL
+              value: "mongodb://root:12345678@mongo.deliorder.svc.cluster.local:27017/deliorder?authSource=admin"
+            - name: FIREBASE_PROJECT_ID
+              value: "deliorder-fd80d"
+            - name: FIREBASE_PRIVATE_KEY_ID
+              value: "afb2cd54a99676a8792ed96c8947db186ff7cde4"
+            - name: FIREBASE_PRIVATE_KEY
+              value: |
+                -----BEGIN PRIVATE KEY-----
+                MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrRP5cacw81vov
+                fJmdnFURfLkthXj7rPbbIIp52RF/5Y9t8DwJEJ+gdH79iYVaNNq6hl9wOWCpZcRr
+                l3JEV+c/OpDUeWzGzHxwlWj7/Fh0H750IF8Y8bMfXKJh9a1c0H9ssSRfEdyTR95Y
+                imS0x+eSNjoKQPK7hx5flkZjnqtQvNq6yVfN8DVD3/7qndbl+PtQpA7GVs2+HyBN
+                1nqatSRvnJHbDBTuItDesK9K6iN90LbcBSgAV/8Tb95gpxpVGGQ7FtmoEV+2nK/1
+                yZIXi0OF5bomyojm24/F8/dm7sWMDGehHf0eZ5CAmY3ISjdn7SKPFFq1+UQafUZi
+                0TJ7OGm7AgMBAAECggEAEk9tfDbJYYXAOJxzFeEVTSnO6Fl5Ljr3J0Uq2M0GrGw/
+                8cp5uKRg1Hgv7W4q5hJ5gfCEuow/08xv++q0ii71p5Jc0oJqyTQqZ6TplOsND9km
+                9OZTFGkes88lAyEPWDloLhggIdPYh5xq3n9pNdSbYsvOV7NK4BaZfjGkM9lOSnLB
+                hfJM9xqlmITOUwr2mzP3R90SUkCSrmQaNTFMzjepFqKLXgxmwmH/ZGVpzHjhc/X0
+                LImmVEcf1yPItbdLgPWZtYusbmYUnKWyfihg/A2JMp9Jn4CtVsHX0ea3jBLusYt1
+                b2SocXAZzzYxJMmeRVJ1J9nfr1pfln+qtUWO5LtlmQKBgQDaUN3bKqRb7DWFyQ+Z
+                JSa/ectq91tzDaL9g4k5lWKVBVnjpRz6cgXkiojwGWsDnPeHYR/lARzdM154fBHi
+                QQ0KgSLOKGw8vJajGEB/H/H2LbT1Em0Ip5zEzLAP6w1AZm+/AE8p0M/YqJYVV83z
+                kSPn/B0voUcuJtSaBDE+23x/uQKBgQDI1TNN9vaLfkV4kf1BReNe1INkIU4BJ9ME
+                ujTrimld4LEiH1y9wrGs8KcJUFiP2nCAJ7lwmTOjSAyUn9ZgKz3piFuhK/31eqkv
+                YV4QctbNyUr5/lcmM+l5mIM5wXeklpk+QS+VKuYQU4KgUiGmXVO5movD1foVxhZZ
+                8XpB1xPnEwKBgQDDaEZr+YsLzC1MBl8z0JESKc3tfGIaZUZSa/3T0OZgRF3k6NE7
+                SfwESAux/M5QeZsFTeXicFCJnYUdis/nGBq4IEYrCPt4kcSzTu3L26gTlW23Pjrh
+                2ET10dB1Lwq5bfbvmzNAVmrznlJX4DOzo2HkL0FgdJbltFPvV3lMreCN4QKBgQCY
+                MopY8WnSOPVo9CobR12SRjb0sRCua4HNuVfVkOVdEaTrmRztahjAWPgdZNhY3FAZ
+                rwEnxdKOUVHHaIJMCzk2O/JE6FPjrvt8PqvMh1smRQAfCJL/DqRHVD9Oi8Gh58dm
+                mHv47bPAd6ks2lFKBLwokmiNFyIZUi8qJohiUR5yJQKBgBrD7IhvuGsAjxzSzlxk
+                Mbke1aJVk0QxiggESF6nIMne85M77qdnv+IvSPcOEmUfMC4NFp2QaM5NB6ufe5Nm
+                Uch4j9LZaiCjHSJ4e+6I7Rb13gZhuSCewjp8Ia6LZaAbAFRvg55OTJUge8g1oYN+
+                zXAZ+2I37fGEcly2+WCCXR+W
+                -----END PRIVATE KEY-----
+            - name: FIREBASE_CLIENT_EMAIL
+              value: "firebase-adminsdk-iujf2@deliorder-fd80d.iam.gserviceaccount.com"
+            - name: FIREBASE_CLIENT_ID
+              value: "104645338574992937006"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: deliorder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "root"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "12345678"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: deliorder-service
-  namespace: default
+  name: mongo
+  namespace: deliorder
+spec:
+  type: ClusterIP
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: mongo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: deliorder
 spec:
   type: NodePort
-  selector:
-    app: deliorder
+  externalTrafficPolicy: Local
   ports:
     - port: 8080
       targetPort: 8080
       nodePort: 30001
+  selector:
+    app: server
