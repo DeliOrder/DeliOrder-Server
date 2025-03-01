@@ -5,6 +5,7 @@ out
 .DS_Store
 *.log*
 .eslintcache
+coverage
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
