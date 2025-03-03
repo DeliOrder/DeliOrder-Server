@@ -24,6 +24,10 @@ jobs:
           target: test
           load: true
 
+      - name: Convert repository name to lowercase
+        run: |
+          echo "IMAGE_NAME=subocker/${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
