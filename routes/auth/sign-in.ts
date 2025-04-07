@@ -146,7 +146,9 @@ router.post(
           },
         },
       );
-      const { accessToken, refreshToken } = kakaoResponse.data;
+
+      const { access_token: accessToken, refresh_token: refreshToken } =
+        kakaoResponse.data;
 
       const userInfoResponse = await axios.get(
         "https://kapi.kakao.com/v2/user/me",

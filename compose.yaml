@@ -16,19 +16,21 @@ services:
       context: .
       target: dev
     image: deliorder-server:latest
+    env_file:
+      - .env
     environment:
       NODE_ENV: "production"
-      CLIENT_PORT: "http://localhost:5173"
-      DATABASE_URL: "mongodb://root:12345678@db:27017/deliorder?authSource=admin"
-      KAKAO_CLIENT_ID: "7ccaae829e6b10624dc19029c505af88"
-      KAKAO_ADMIN_KEY: "979f902ee435b309001a607dfde449c6"
-      PORT: "8080"
-      JWT_SECRET_KEY: "3e91daf7-01f0-413f-bd23-eb96ca454bc0"
-      FIREBASE_PROJECT_ID: "deliorder-fd80d"
-      FIREBASE_PRIVATE_KEY_ID: "afb2cd54a99676a8792ed96c8947db186ff7cde4"
-      FIREBASE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrRP5cacw81vov\nfJmdnFURfLkthXj7rPbbIIp52RF/5Y9t8DwJEJ+gdH79iYVaNNq6hl9wOWCpZcRr\nl3JEV+c/OpDUeWzGzHxwlWj7/Fh0H750IF8Y8bMfXKJh9a1c0H9ssSRfEdyTR95Y\nimS0x+eSNjoKQPK7hx5flkZjnqtQvNq6yVfN8DVD3/7qndbl+PtQpA7GVs2+HyBN\n1nqatSRvnJHbDBTuItDesK9K6iN90LbcBSgAV/8Tb95gpxpVGGQ7FtmoEV+2nK/1\nyZIXi0OF5bomyojm24/F8/dm7sWMDGehHf0eZ5CAmY3ISjdn7SKPFFq1+UQafUZi\n0TJ7OGm7AgMBAAECggEAEk9tfDbJYYXAOJxzFeEVTSnO6Fl5Ljr3J0Uq2M0GrGw/\n8cp5uKRg1Hgv7W4q5hJ5gfCEuow/08xv++q0ii71p5Jc0oJqyTQqZ6TplOsND9km\n9OZTFGkes88lAyEPWDloLhggIdPYh5xq3n9pNdSbYsvOV7NK4BaZfjGkM9lOSnLB\nhfJM9xqlmITOUwr2mzP3R90SUkCSrmQaNTFMzjepFqKLXgxmwmH/ZGVpzHjhc/X0\nLImmVEcf1yPItbdLgPWZtYusbmYUnKWyfihg/A2JMp9Jn4CtVsHX0ea3jBLusYt1\nb2SocXAZzzYxJMmeRVJ1J9nfr1pfln+qtUWO5LtlmQKBgQDaUN3bKqRb7DWFyQ+Z\nJSa/ectq91tzDaL9g4k5lWKVBVnjpRz6cgXkiojwGWsDnPeHYR/lARzdM154fBHi\nQQ0KgSLOKGw8vJajGEB/H/H2LbT1Em0Ip5zEzLAP6w1AZm+/AE8p0M/YqJYVV83z\nkSPn/B0voUcuJtSaBDE+23x/uQKBgQDI1TNN9vaLfkV4kf1BReNe1INkIU4BJ9ME\nujTrimld4LEiH1y9wrGs8KcJUFiP2nCAJ7lwmTOjSAyUn9ZgKz3piFuhK/31eqkv\nYV4QctbNyUr5/lcmM+l5mIM5wXeklpk+QS+VKuYQU4KgUiGmXVO5movD1foVxhZZ\n8XpB1xPnEwKBgQDDaEZr+YsLzC1MBl8z0JESKc3tfGIaZUZSa/3T0OZgRF3k6NE7\nSfwESAux/M5QeZsFTeXicFCJnYUdis/nGBq4IEYrCPt4kcSzTu3L26gTlW23Pjrh\n2ET10dB1Lwq5bfbvmzNAVmrznlJX4DOzo2HkL0FgdJbltFPvV3lMreCN4QKBgQCY\nMopY8WnSOPVo9CobR12SRjb0sRCua4HNuVfVkOVdEaTrmRztahjAWPgdZNhY3FAZ\nrwEnxdKOUVHHaIJMCzk2O/JE6FPjrvt8PqvMh1smRQAfCJL/DqRHVD9Oi8Gh58dm\nmHv47bPAd6ks2lFKBLwokmiNFyIZUi8qJohiUR5yJQKBgBrD7IhvuGsAjxzSzlxk\nMbke1aJVk0QxiggESF6nIMne85M77qdnv+IvSPcOEmUfMC4NFp2QaM5NB6ufe5Nm\nUch4j9LZaiCjHSJ4e+6I7Rb13gZhuSCewjp8Ia6LZaAbAFRvg55OTJUge8g1oYN+\nzXAZ+2I37fGEcly2+WCCXR+W\n-----END PRIVATE KEY-----\n"
-      FIREBASE_CLIENT_EMAIL: "firebase-adminsdk-iujf2@deliorder-fd80d.iam.gserviceaccount.com"
-      FIREBASE_CLIENT_ID: "104645338574992937006"
+      CLIENT_PORT: ${CLIENT_PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_ADMIN_KEY: ${KAKAO_ADMIN_KEY}
+      PORT: ${PORT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_CLIENT_ID: ${FIREBASE_CLIENT_ID}
     ports:
       - 8080:8080
       - 9229:9229
@@ -44,7 +46,7 @@ services:
     image: mongodb/mongodb-community-server:7.0.7-ubi8
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: "12345678"
+      MONGO_INITDB_ROOT_PASSWORD: ${DOCKER_MONGODB_PASSWORD}
     ports:
       - "27017:27017"
 # The commented out section below is an example of how to define a PostgreSQL

@@ -6,6 +6,7 @@ out
 *.log*
 .eslintcache
 coverage
+dist/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
