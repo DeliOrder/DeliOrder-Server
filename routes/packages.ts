@@ -1,7 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
+import multer from "multer";
 import verifyJWTToken from "../middlewares/verifyJWTToken";
 import { Package } from "../model/Package";
 import User from "../model/User";
+import deleteFilesFromAWS from "../utils/deleteFileToAWS";
+import generateUniqueSerialNumber from "../utils/createRandomNum";
+import processOrdersWithFiles from "../utils/uploadFileToAWS";
 
 const router = express.Router();
 
@@ -9,49 +13,31 @@ interface UserRequest extends Request {
   userId?: string;
 }
 
-const createRandomSerialNumber = (): string => {
-  const randomNumber = Math.floor(Math.random() * 1000000);
-  return String(randomNumber).padStart(6, "0");
-};
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post(
   "/new",
   verifyJWTToken,
+  upload.array("files"),
   async (req: UserRequest, res: Response, next: NextFunction) => {
+    let orders;
+
     try {
       const { userId } = req;
-      const { orders } = req.body;
+      const files = req.files as Express.Multer.File[];
+      orders = JSON.parse(req.body.orders);
 
       if (!orders || orders.length === 0) {
         res.status(400).json({ error: "조합된 행동이 없습니다." });
         return;
       }
 
-      const serialNumberSet = new Set<string>();
-      let serialNumber: string = createRandomSerialNumber();
-
-      while (serialNumberSet.has(serialNumber)) {
-        serialNumber = createRandomSerialNumber();
-      }
-
-      serialNumberSet.add(serialNumber);
-
-      const existingPackages = await Package.find(
-        { serialNumber: { $in: [...serialNumberSet] } },
-        { serialNumber: 1 },
-      ).lean();
-
-      const existingSerialNumbers = new Set(
-        existingPackages.map((pkg) => pkg.serialNumber),
-      );
-
-      while (existingSerialNumbers.has(serialNumber)) {
-        serialNumber = createRandomSerialNumber();
-      }
+      const updatedOrders = await processOrdersWithFiles(orders, files);
+      const serialNumber = await generateUniqueSerialNumber();
 
       const newPackage = await Package.create({
         serialNumber,
-        orders,
+        orders: updatedOrders,
         ...(userId && { author: userId }),
       });
 
@@ -67,7 +53,12 @@ router.post(
         packageId: newPackage._id,
       });
     } catch (error) {
-      console.error("새로운 패키지 생성 오류 발생:", error);
+      console.error("패키지 생성 중 오류:", error);
+
+      if (orders) {
+        await deleteFilesFromAWS(orders);
+      }
+
       next(error);
     }
   },
