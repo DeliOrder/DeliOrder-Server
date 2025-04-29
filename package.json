@@ -39,7 +39,7 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
-    "@types/express": "^5.0.0",
+    "@types/express": "^5.0.1",
     "@types/http-errors": "^2.0.4",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
