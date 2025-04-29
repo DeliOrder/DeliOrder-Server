@@ -4,36 +4,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("multer"));
 const verifyJWTToken_1 = __importDefault(require("../middlewares/verifyJWTToken"));
 const Package_1 = require("../model/Package");
 const User_1 = __importDefault(require("../model/User"));
+const deleteFileToAWS_1 = __importDefault(require("../utils/deleteFileToAWS"));
+const createRandomNum_1 = __importDefault(require("../utils/createRandomNum"));
+const uploadFileToAWS_1 = __importDefault(require("../utils/uploadFileToAWS"));
 const router = express_1.default.Router();
-const createRandomSerialNumber = () => {
-    const randomNumber = Math.floor(Math.random() * 1000000);
-    return String(randomNumber).padStart(6, "0");
-};
-router.post("/new", verifyJWTToken_1.default, async (req, res, next) => {
+const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
+router.post("/new", verifyJWTToken_1.default, upload.array("files"), async (req, res, next) => {
+    let orders;
     try {
         const { userId } = req;
-        const { orders } = req.body;
+        const files = req.files;
+        orders = JSON.parse(req.body.orders);
         if (!orders || orders.length === 0) {
             res.status(400).json({ error: "조합된 행동이 없습니다." });
             return;
         }
-        const serialNumberSet = new Set();
-        let serialNumber = createRandomSerialNumber();
-        while (serialNumberSet.has(serialNumber)) {
-            serialNumber = createRandomSerialNumber();
-        }
-        serialNumberSet.add(serialNumber);
-        const existingPackages = await Package_1.Package.find({ serialNumber: { $in: [...serialNumberSet] } }, { serialNumber: 1 }).lean();
-        const existingSerialNumbers = new Set(existingPackages.map((pkg) => pkg.serialNumber));
-        while (existingSerialNumbers.has(serialNumber)) {
-            serialNumber = createRandomSerialNumber();
-        }
+        const updatedOrders = await (0, uploadFileToAWS_1.default)(orders, files);
+        const serialNumber = await (0, createRandomNum_1.default)();
         const newPackage = await Package_1.Package.create({
             serialNumber,
-            orders,
+            orders: updatedOrders,
             ...(userId && { author: userId }),
         });
         if (userId) {
@@ -45,7 +39,10 @@ router.post("/new", verifyJWTToken_1.default, async (req, res, next) => {
         });
     }
     catch (error) {
-        console.error("새로운 패키지 생성 오류 발생:", error);
+        console.error("패키지 생성 중 오류:", error);
+        if (orders) {
+            await (0, deleteFileToAWS_1.default)(orders);
+        }
         next(error);
     }
 });

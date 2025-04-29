@@ -142,7 +142,7 @@ router.post("/kakao", async (req, res, next) => {
                 "content-type": "application/x-www-form-urlencoded;charset=utf-8",
             },
         });
-        const { accessToken, refreshToken } = kakaoResponse.data;
+        const { access_token: accessToken, refresh_token: refreshToken } = kakaoResponse.data;
         const userInfoResponse = await axios_1.default.get("https://kapi.kakao.com/v2/user/me", {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
