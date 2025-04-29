@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/bin/www.js",
+    "start": "npm run build && node ./dist/bin/www.js",
     "dev": "nodemon --exec ts-node ./bin/www.ts",
     "format": "prettier --cache --write .",
     "lint": "eslint . --no-cache",
