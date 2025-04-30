@@ -8,5 +8,7 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "types": ["node", "express", "jest"]
-  }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
