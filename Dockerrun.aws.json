@@ -1,7 +1,7 @@
 {
-  "AWSEBDockerrunVersion": "2",
+  "AWSEBDockerrunVersion": 1,
   "Image": {
-    "Name": "subocker/deliorder-server:latest",
+    "Name": "058264334774.dkr.ecr.ap-northeast-2.amazonaws.com/deliorder-server:latest",
     "Update": "true"
   },
   "Ports": [
@@ -9,61 +9,5 @@
       "ContainerPort": "8080"
     }
   ],
-  "Environment": [
-    {
-      "Name": "NODE_ENV",
-      "Value": "production"
-    },
-    {
-      "Name": "CLIENT_PORT",
-      "Value": "8080"
-    },
-    {
-      "Name": "DATABASE_URL",
-      "Value": "mongodb://root:12345678@mongo:27017/deliorder?authSource=admin"
-    },
-    {
-      "Name": "KAKAO_CLIENT_ID",
-      "Value": "${KAKAO_CLIENT_ID}"
-    },
-    {
-      "Name": "KAKAO_ADMIN_KEY",
-      "Value": "${KAKAO_ADMIN_KEY}"
-    },
-    {
-      "Name": "PORT",
-      "Value": "8080"
-    },
-    {
-      "Name": "JWT_SECRET_KEY",
-      "Value": "${JWT_SECRET_KEY}"
-    },
-    {
-      "Name": "FIREBASE_PROJECT_ID",
-      "Value": "${FIREBASE_PROJECT_ID}"
-    },
-    {
-      "Name": "FIREBASE_PRIVATE_KEY_ID",
-      "Value": "${FIREBASE_PRIVATE_KEY_ID}"
-    },
-    {
-      "Name": "FIREBASE_PRIVATE_KEY",
-      "Value": "${FIREBASE_PRIVATE_KEY}"
-    },
-    {
-      "Name": "FIREBASE_CLIENT_EMAIL",
-      "Value": "${FIREBASE_CLIENT_EMAIL}"
-    },
-    {
-      "Name": "FIREBASE_CLIENT_ID",
-      "Value": "${FIREBASE_CLIENT_ID}"
-    }
-  ],
-  "Volumes": [
-    {
-      "HostDirectory": "/tmp",
-      "ContainerDirectory": "/usr/src/app"
-    }
-  ],
-  "Logging": "/var/log/eb-docker/eb-logs"
+  "Logging": "/var/log/app"
 }
