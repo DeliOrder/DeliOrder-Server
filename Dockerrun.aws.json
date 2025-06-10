@@ -1,5 +1,5 @@
 {
-  "AWSEBDockerrunVersion": 1,
+  "AWSEBDockerrunVersion": "1",
   "Image": {
     "Name": "058264334774.dkr.ecr.ap-northeast-2.amazonaws.com/deliorder-server:latest",
     "Update": "true"
@@ -8,6 +8,5 @@
     {
       "ContainerPort": "8080"
     }
-  ],
-  "Logging": "/var/log/app"
+  ]
 }

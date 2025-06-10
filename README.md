@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-<a href="https://github.com/Farmer15/DeliOrder-Client">클라이언트 </a> | <a href="https://github.com/Farmer15/deliorder-server">서버 </a> | <a href="https://www.notion.so/5be754c5d84e4491b52d52b93b2624f9?pvs=21">정리 노션 </a>
+<a href="https://github.com/DeliOrder/DeliOrder-Client">클라이언트 </a> | <a href="https://github.com/DeliOrder/DeliOrder-Server">서버 </a> | <a href="https://catnip-puppy-52c.notion.site/1ad7604d886e80d99206da13e03953cd?source=copy_link">정리 노션 </a>
 </div>
 <br>
 
@@ -20,25 +20,25 @@
 <!-- toc -->
 
 - [🔷 소개영상](#%F0%9F%94%B7-%EC%86%8C%EA%B0%9C%EC%98%81%EC%83%81)
-- [**🔷 개발 환경**](#%F0%9F%94%B7-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD)
-  - [**AWS S3 를 추가한 이유**](#aws-s3-%EB%A5%BC-%EC%B6%94%EA%B0%80%ED%95%9C-%EC%9D%B4%EC%9C%A0)
-  - [**Node.js 와 Elctron**](#nodejs-%EC%99%80-elctron)
-  - [**주요 라이브러리 소개**](#%EC%A3%BC%EC%9A%94-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%86%8C%EA%B0%9C)
-- [**🔷 문제 해결하기: (1) macOS 와 Windows 호환성 이슈**](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-1-macos-%EC%99%80-windows-%ED%98%B8%ED%99%98%EC%84%B1-%EC%9D%B4%EC%8A%88)
-  - [**1. 자소 분리 통합시키기**](#1-%EC%9E%90%EC%86%8C-%EB%B6%84%EB%A6%AC-%ED%86%B5%ED%95%A9%EC%8B%9C%ED%82%A4%EA%B8%B0)
-  - [**2. 경로 표기 통일시키기**](#2-%EA%B2%BD%EB%A1%9C-%ED%91%9C%EA%B8%B0-%ED%86%B5%EC%9D%BC%EC%8B%9C%ED%82%A4%EA%B8%B0)
-- [**🔷 문제 해결하기: (2) 실행 파일 전송 가능하게 하기**](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-2-%EC%8B%A4%ED%96%89-%ED%8C%8C%EC%9D%BC-%EC%A0%84%EC%86%A1-%EA%B0%80%EB%8A%A5%ED%95%98%EA%B2%8C-%ED%95%98%EA%B8%B0)
-  - [**“.app” 확장자 인식가능하게 하기**](#app-%ED%99%95%EC%9E%A5%EC%9E%90-%EC%9D%B8%EC%8B%9D%EA%B0%80%EB%8A%A5%ED%95%98%EA%B2%8C-%ED%95%98%EA%B8%B0)
-  - [**파일 선택기 구현을 통한 문제 해결**](#%ED%8C%8C%EC%9D%BC-%EC%84%A0%ED%83%9D%EA%B8%B0-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%86%B5%ED%95%9C-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
-  - [**파일 객체를 이용한 업로드 기능**](#%ED%8C%8C%EC%9D%BC-%EA%B0%9D%EC%B2%B4%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%97%85%EB%A1%9C%EB%93%9C-%EA%B8%B0%EB%8A%A5)
-- [**🔷 문제 해결하기 : (3) 모달 관리 문제, 관심사 분리로 해결하기**](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0--3-%EB%AA%A8%EB%8B%AC-%EA%B4%80%EB%A6%AC-%EB%AC%B8%EC%A0%9C-%EA%B4%80%EC%8B%AC%EC%82%AC-%EB%B6%84%EB%A6%AC%EB%A1%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0)
+- [🔷 개발 환경](#%F0%9F%94%B7-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD)
+  - [AWS S3 를 추가한 이유](#aws-s3-%EB%A5%BC-%EC%B6%94%EA%B0%80%ED%95%9C-%EC%9D%B4%EC%9C%A0)
+  - [Node.js 와 Elctron](#nodejs-%EC%99%80-elctron)
+  - [주요 라이브러리 소개](#%EC%A3%BC%EC%9A%94-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%86%8C%EA%B0%9C)
+- [🔷 문제 해결하기: (1) macOS 와 Windows 호환성 이슈](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-1-macos-%EC%99%80-windows-%ED%98%B8%ED%99%98%EC%84%B1-%EC%9D%B4%EC%8A%88)
+  - [1. 자소 분리 통합시키기](#1-%EC%9E%90%EC%86%8C-%EB%B6%84%EB%A6%AC-%ED%86%B5%ED%95%A9%EC%8B%9C%ED%82%A4%EA%B8%B0)
+  - [2. 경로 표기 통일시키기](#2-%EA%B2%BD%EB%A1%9C-%ED%91%9C%EA%B8%B0-%ED%86%B5%EC%9D%BC%EC%8B%9C%ED%82%A4%EA%B8%B0)
+- [🔷 문제 해결하기: (2) 실행 파일 전송 가능하게 하기](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-2-%EC%8B%A4%ED%96%89-%ED%8C%8C%EC%9D%BC-%EC%A0%84%EC%86%A1-%EA%B0%80%EB%8A%A5%ED%95%98%EA%B2%8C-%ED%95%98%EA%B8%B0)
+  - [“.app” 확장자 인식가능하게 하기](#app-%ED%99%95%EC%9E%A5%EC%9E%90-%EC%9D%B8%EC%8B%9D%EA%B0%80%EB%8A%A5%ED%95%98%EA%B2%8C-%ED%95%98%EA%B8%B0)
+    - [파일 선택기 구현을 통한 문제 해결](#%ED%8C%8C%EC%9D%BC-%EC%84%A0%ED%83%9D%EA%B8%B0-%EA%B5%AC%ED%98%84%EC%9D%84-%ED%86%B5%ED%95%9C-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
+    - [파일 객체를 이용한 업로드 기능](#%ED%8C%8C%EC%9D%BC-%EA%B0%9D%EC%B2%B4%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%97%85%EB%A1%9C%EB%93%9C-%EA%B8%B0%EB%8A%A5)
+- [🔷 문제 해결하기 : (3) 모달 관리 문제, 관심사 분리로 해결하기](#%F0%9F%94%B7-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0--3-%EB%AA%A8%EB%8B%AC-%EA%B4%80%EB%A6%AC-%EB%AC%B8%EC%A0%9C-%EA%B4%80%EC%8B%AC%EC%82%AC-%EB%B6%84%EB%A6%AC%EB%A1%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0)
   - [중복된 형태의 상태값 사용, 커스텀 훅으로 캡슐화 하기](#%EC%A4%91%EB%B3%B5%EB%90%9C-%ED%98%95%ED%83%9C%EC%9D%98-%EC%83%81%ED%83%9C%EA%B0%92-%EC%82%AC%EC%9A%A9-%EC%BB%A4%EC%8A%A4%ED%85%80-%ED%9B%85%EC%9C%BC%EB%A1%9C-%EC%BA%A1%EC%8A%90%ED%99%94-%ED%95%98%EA%B8%B0)
   - [알림 메시지 모달은 전역에서 단 1개로 관리하기](#%EC%95%8C%EB%A6%BC-%EB%A9%94%EC%8B%9C%EC%A7%80-%EB%AA%A8%EB%8B%AC%EC%9D%80-%EC%A0%84%EC%97%AD%EC%97%90%EC%84%9C-%EB%8B%A8-1%EA%B0%9C%EB%A1%9C-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0)
-- [**🔷 협업일지**](#%F0%9F%94%B7-%ED%98%91%EC%97%85%EC%9D%BC%EC%A7%80)
-  - [**1. 적극적인 소통은 협업의 기본**](#1-%EC%A0%81%EA%B7%B9%EC%A0%81%EC%9D%B8-%EC%86%8C%ED%86%B5%EC%9D%80-%ED%98%91%EC%97%85%EC%9D%98-%EA%B8%B0%EB%B3%B8)
-  - [**2. 문서화의 중요성**](#2-%EB%AC%B8%EC%84%9C%ED%99%94%EC%9D%98-%EC%A4%91%EC%9A%94%EC%84%B1)
-  - [**3. 정보 공유로 향상되는 팀워크와 효율**](#3-%EC%A0%95%EB%B3%B4-%EA%B3%B5%EC%9C%A0%EB%A1%9C-%ED%96%A5%EC%83%81%EB%90%98%EB%8A%94-%ED%8C%80%EC%9B%8C%ED%81%AC%EC%99%80-%ED%9A%A8%EC%9C%A8)
-  - [**4. 3인이라는 소수 구성원의 의사결정 전략**](#4-3%EC%9D%B8%EC%9D%B4%EB%9D%BC%EB%8A%94-%EC%86%8C%EC%88%98-%EA%B5%AC%EC%84%B1%EC%9B%90%EC%9D%98-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95-%EC%A0%84%EB%9E%B5)
+- [🔷 협업일지](#%F0%9F%94%B7-%ED%98%91%EC%97%85%EC%9D%BC%EC%A7%80)
+  - [1. 적극적인 소통은 협업의 기본](#1-%EC%A0%81%EA%B7%B9%EC%A0%81%EC%9D%B8-%EC%86%8C%ED%86%B5%EC%9D%80-%ED%98%91%EC%97%85%EC%9D%98-%EA%B8%B0%EB%B3%B8)
+  - [2. 문서화의 중요성](#2-%EB%AC%B8%EC%84%9C%ED%99%94%EC%9D%98-%EC%A4%91%EC%9A%94%EC%84%B1)
+  - [3. 정보 공유로 향상되는 팀워크와 효율](#3-%EC%A0%95%EB%B3%B4-%EA%B3%B5%EC%9C%A0%EB%A1%9C-%ED%96%A5%EC%83%81%EB%90%98%EB%8A%94-%ED%8C%80%EC%9B%8C%ED%81%AC%EC%99%80-%ED%9A%A8%EC%9C%A8)
+  - [4. 3인이라는 소수 구성원의 의사결정 전략](#4-3%EC%9D%B8%EC%9D%B4%EB%9D%BC%EB%8A%94-%EC%86%8C%EC%88%98-%EA%B5%AC%EC%84%B1%EC%9B%90%EC%9D%98-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95-%EC%A0%84%EB%9E%B5)
 - [🔷 팀원 소개](#%F0%9F%94%B7-%ED%8C%80%EC%9B%90-%EC%86%8C%EA%B0%9C)
 
 <!-- tocstop -->
@@ -167,7 +167,7 @@ Node.js 에서 제공되는 파일 시스템 모듈을 활용하여 조작이 �
 
 ### **파일 선택기 구현을 통한 문제 해결**
 
-브라우저에서 제공하는 파일 선택기를 사용해서 app 확장자 파일에 접근할 경ㄴ우 폴더로 인식하여서 하위 폴더로 진입하는 문제가 발생하였습니다. 이렇게 app 확장자를 폴더로 인식하는 문제를 해결하기 위해 Electron에서 파일 선택기를 구현하는 방법을 택하였습니다.
+브라우저에서 제공하는 파일 선택기를 사용해서 app 확장자 파일에 접근할 경우 폴더로 인식하여서 하위 폴더로 진입하는 문제가 발생하였습니다. 이렇게 app 확장자를 폴더로 인식하는 문제를 해결하기 위해 Electron에서 파일 선택기를 구현하는 방법을 택하였습니다.
 
 ```jsx
 const result = await dialog.showOpenDialog({
